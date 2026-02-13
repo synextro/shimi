@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 import data_handler as dh
-import json
-import os
 
 class Social(commands.Cog):
     def __init__(self, bot):
@@ -12,12 +10,11 @@ class Social(commands.Cog):
     async def profile(self, ctx, member: discord.Member = None):
         """View your own or someone else's profile"""
         member = member or ctx.author
-        data = dh.load_data()
         user_id = str(member.id)
+        user_data = dh.get_user(user_id)
 
-        user_info = data.get(user_id, {})
-        bio = user_info.get("bio", "No bio set. Use `sm setbio`!")
-        balance = user_info.get("balance", 0)
+        bio = "No bio set. Use `sm setbio`!" if not user_data["bio"] else user_data["bio"]
+        balance = user_data["balance"]
 
         embed = discord.Embed(
             title=f"{member.display_name}'s Profile",
@@ -36,14 +33,11 @@ class Social(commands.Cog):
         if len(new_bio) > 100:
             return await ctx.send("Keep your bio under 100 characters!")
 
-        data = dh.load_data()
         user_id = str(ctx.author.id)
-
-        if user_id not in data:
-            data[user_id] = {"balance": 0}
+        user_data = dh.get_user(user_id)
         
-        data[user_id]["bio"] = new_bio
-        dh.save_data(data)
+        user_data["bio"] = new_bio
+        dh.save_user(user_id, user_data)
         await ctx.send("✅ Bio updated!")
 
 async def setup(bot):

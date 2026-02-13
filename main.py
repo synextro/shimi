@@ -18,6 +18,8 @@ class Shimi(commands.Bot):
         print("economy cog loaded")
         await self.load_extension("cogs.social")
         print("social cog loaded")
+        await self.load_extension("cogs.fun")
+        print("fun cog loaded")
 
 bot = Shimi()
 
@@ -31,7 +33,22 @@ async def ping(ctx: commands.Context):
     """Get the bot's latency"""
     await ctx.send(f"pong! {bot.latency * 1000:.2f}ms")
 
+@bot.command()
+async def say(ctx, *, message):
+    await ctx.send(message)
+
+@bot.command()
+@commands.has_permissions(manage_messages=True)
+async def purge(ctx, amount = 0):
+    if not amount:
+        return await ctx.send("specify the amount")
+
+    await ctx.channel.purge(limit=amount + 1)
+
+    await ctx.send(f"Cleared {amount} messages", delete_after=3)
+
 token = os.getenv("TOKEN")
+
 if not token:
     raise ValueError("TOKEN not found in .env file")
 
