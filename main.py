@@ -16,6 +16,8 @@ class Shimi(commands.Bot):
     async def setup_hook(self):
         await self.load_extension("cogs.economy")
         print("economy cog loaded")
+        await self.load_extension("cogs.social")
+        print("social cog loaded")
 
 bot = Shimi()
 
