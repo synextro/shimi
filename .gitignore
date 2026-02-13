@@ -3,3 +3,4 @@ __pycache__/
 .direnv/
 .env*
 shell.nix
+data.json
